@@ -26,11 +26,21 @@ The repository includes Python source code in `src/`, workflow notebooks in `not
 ## Quick Start
 
 ```bash
+cp .env.example .env
 make setup
 make up
 ```
 
 After the database is running, the pipeline components can be executed from the scripts in `notebook/` or the modules in `src/`, depending on whether you want an exploratory or more programmatic workflow.
+
+## Project Structure
+
+- `src/`: core Python modules for downloading, transforming, validating, and loading survey data
+- `notebook/`: lightweight workflow scripts for stepping through each pipeline stage
+- `data/raw/`: local storage for unprocessed source files
+- `data/processed/`: local storage for harmonized outputs
+- `docker-compose.yml`: local PostgreSQL and pgAdmin services
+- `.env.example`: template for the environment variables required by Docker services
 
 ## Why It Matters
 
