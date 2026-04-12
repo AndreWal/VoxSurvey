@@ -4,6 +4,10 @@
         "set": true,
         "git init": true,
         "git add": true,
-        "git commit": true
+        "git commit": true,
+        "git remote": true,
+        "git rm": true,
+        "git config": true,
+        "git ls-tree": true
     }
 }
