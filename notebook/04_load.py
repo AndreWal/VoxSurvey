@@ -1,20 +1,24 @@
 import marimo
 
+__generated_with = "0.23.1"
 app = marimo.App()
 
-@app.cell
-def __():
-    from dd_survey_pipeline.transform import read_csv, normalize
-    from dd_survey_pipeline.load_postgres import write_df
-    return read_csv, normalize, write_df
 
 @app.cell
-def __(read_csv, normalize, write_df):
-    df = normalize(read_csv("data/raw/file.csv"))
+def _():
+    from load_postgres import write_df, read_parquet
+
+    return read_parquet, write_df
+
+
+@app.cell
+def _(read_parquet, write_df):
+    df = read_parquet("../data/processed/surveys.parquet")
     dsn = "postgresql://admin:admin@localhost:5433/vote_surveys"
     inserted = write_df(df, dsn, "staging_votes")
     inserted
     return
+
 
 if __name__ == "__main__":
     app.run()
