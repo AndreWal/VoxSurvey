@@ -8,6 +8,7 @@
         "git remote": true,
         "git rm": true,
         "git config": true,
-        "git ls-tree": true
+        "git ls-tree": true,
+        "git push": true
     }
 }
