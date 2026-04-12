@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field
+from typing import Literal
 
 class SurveyRow(BaseModel):
-    vote_id: str = Field(min_length=1)
-    title: str
-    vote_date: str
-    language: str
+    age: int = Field(ge=18, le=100)
+    gender: Literal[1, 2, 3] | None = None
+    polint: Literal[1, 2, 3, 4] | None = None
+    vote_id: int

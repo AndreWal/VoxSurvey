@@ -14,7 +14,7 @@ def _():
 
 @app.cell
 def _(SurveyRow, pl):
-    df = pl.read_csv("../data/raw/file.csv")
+    df = pl.read_parquet("../data/processed/surveys.parquet")
     records = df.to_dicts()
     valid = [SurveyRow.model_validate(r) for r in records]
     len(valid)
