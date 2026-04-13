@@ -38,21 +38,23 @@ def normalize(df: pl.DataFrame) -> pl.DataFrame:
 def select_cols(df: pl.DataFrame, cols: list[str]) -> pl.DataFrame:
     return df.select(cols)
 
+vote_year: dict[range, int] = {
+    range(636, 638): 2020,
+    range(638, 651): 2021,
+    range(651, 662): 2022,
+    range(662, 665): 2023,
+    range(665, 677): 2024,
+    range(677, 681): 2025,
+    range(681, 700): 2026,
+}
+
+
 def cal_age(df: pl.DataFrame, vote: int) -> pl.DataFrame:
-    if vote >= 681:
-        year = 2026
-    elif vote > 676:
-        year = 2025
-    elif vote > 664:
-        year = 2024
-    elif vote > 661:
-        year = 2023
-    elif vote > 650:
-        year = 2022
-    elif vote > 637:
-        year = 2021
+    for rng, year in vote_year.items():
+        if vote in rng:
+            break
     else:
-        year = 2020
+        raise ValueError(f"Unknown vote ID {vote} — add it to vote_year")
 
     return df.with_columns(
         (pl.lit(year) - pl.col("birthyearr").cast(pl.Int32)).alias("age")

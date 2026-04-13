@@ -7,14 +7,22 @@ app = marimo.App()
 @app.cell
 def _():
     from load_postgres import write_df, read_parquet
+    import os
+    from dotenv import load_dotenv
 
-    return read_parquet, write_df
+    load_dotenv("../.env")
+
+    user = os.environ["POSTGRES_USER"]
+    password = os.environ["POSTGRES_PASSWORD"]
+    db = os.environ["POSTGRES_DB"]
+    dsn = f"postgresql://{user}:{password}@localhost:5433/{db}"
+
+    return read_parquet, write_df, dsn
 
 
 @app.cell
 def _(read_parquet, write_df):
     df = read_parquet("../data/processed/surveys.parquet")
-    dsn = "postgresql://admin:admin@localhost:5433/vote_surveys"
     inserted = write_df(df, dsn, "staging_votes")
     inserted
     return

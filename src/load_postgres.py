@@ -1,5 +1,6 @@
-import psycopg
+from psycopg import connect, sql
 import polars as pl
+from pathlib import Path
 
 def write_df(df: pl.DataFrame, dsn: str, table: str) -> int:
     rows = df.to_dicts()
@@ -8,22 +9,30 @@ def write_df(df: pl.DataFrame, dsn: str, table: str) -> int:
     cols = list(rows[0].keys())
 
     type_map = {pl.Int32: "INTEGER", pl.Int64: "BIGINT", pl.Utf8: "TEXT", pl.Float64: "FLOAT"}
-    ddl_cols = ", ".join(
-        f"{c} {type_map.get(df[c].dtype, 'TEXT')}"
+    ddl_cols = sql.SQL(", ").join(
+        sql.SQL("{} {}").format(
+            sql.Identifier(c),
+            sql.SQL(type_map.get(df[c].dtype, "TEXT")),
+        )
         for c in cols
     )
-    create_sql = f"CREATE TABLE IF NOT EXISTS {table} ({ddl_cols})"
+    create_sql = sql.SQL("CREATE TABLE IF NOT EXISTS {} ({})").format(
+        sql.Identifier(table), ddl_cols
+    )
 
+    col_ids = sql.SQL(", ").join(sql.Identifier(c) for c in cols)
+    placeholders = sql.SQL(", ").join(sql.Placeholder() * len(cols))
+    insert_sql = sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
+        sql.Identifier(table), col_ids, placeholders
+    )
 
-    values_sql = ", ".join(["%s"] * len(cols))
-    insert_sql = f"INSERT INTO {table} ({', '.join(cols)}) VALUES ({values_sql})"
-    with psycopg.connect(dsn) as conn:
+    with connect(dsn) as conn:
         with conn.cursor() as cur:
             cur.execute(create_sql)
-            for row in rows:
-                cur.execute(insert_sql, [row[c] for c in cols])
+            cur.executemany(insert_sql, [[row[c] for c in cols] for row in rows])
         conn.commit()
     return len(rows)
 
-def read_parquet(df: pl.DataFrame) -> pl.DataFrame:
-    return pl.read_parquet(df)
+
+def read_parquet(path: str | Path) -> pl.DataFrame:
+    return pl.read_parquet(path)

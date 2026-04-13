@@ -10,3 +10,4 @@ src/DD_survey_pipeline.egg-info/SOURCES.txt
 src/DD_survey_pipeline.egg-info/dependency_links.txt
 src/DD_survey_pipeline.egg-info/requires.txt
 src/DD_survey_pipeline.egg-info/top_level.txt
+tests/test_transform.py

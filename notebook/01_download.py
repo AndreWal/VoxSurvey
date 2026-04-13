@@ -14,11 +14,16 @@ def _():
 
 @app.cell
 def _(Path, download_csv):
-    for vote in range(636,682):
+    for vote in range(636, 682):
         url = f"https://swissvotes.ch/vote/{str(vote)}.00/nachbefragung.csv"
         out = Path(f"../data/raw/vote_{str(vote)}.csv")
+
+        if out.exists():
+            print(f"Already exists locally: {out}")
+            continue
+
         path = download_csv(url, out)
-        path
+        print(f"Downloaded: {path}")
     return
 
 
