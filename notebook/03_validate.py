@@ -17,7 +17,7 @@ def _(SurveyRow, pl):
     df = pl.read_parquet("../data/processed/surveys.parquet")
     records = df.to_dicts()
     valid = [SurveyRow.model_validate(r) for r in records]
-    len(valid)
+    print("All records are valid!")
     return
 
 

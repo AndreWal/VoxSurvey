@@ -27,5 +27,11 @@ def _(Path, download_csv):
     return
 
 
+@app.cell
+def _():
+    print("All files downloaded.")
+    return
+
+
 if __name__ == "__main__":
     app.run()

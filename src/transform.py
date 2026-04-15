@@ -69,10 +69,26 @@ def rename_cols(df: pl.DataFrame, col_mapping: dict[str, str]) -> pl.DataFrame:
 def add_vote_id(df: pl.DataFrame, vote_id: int) -> pl.DataFrame:
     return df.with_columns(pl.lit(vote_id).alias("vote_id"))
 
-def replace_invalid_with_null(
+def replace_invalid_with_null_eight(
     df: pl.DataFrame,
     cols: list[str] = ["gender", "polint"],
     invalid_code: int = 8,
+) -> pl.DataFrame:
+    return df.with_columns(
+        [
+            pl.when(pl.col(c).cast(pl.Int32, strict=False) == invalid_code)
+            .then(None)
+            .otherwise(pl.col(c).cast(pl.Int32, strict=False))
+            .cast(pl.Int32)
+            .alias(c)
+            for c in cols
+        ]
+    )
+
+def replace_invalid_with_null_nine_eight(
+    df: pl.DataFrame,
+    cols: list[str] = ["lrsp"],
+    invalid_code: int = 98,
 ) -> pl.DataFrame:
     return df.with_columns(
         [

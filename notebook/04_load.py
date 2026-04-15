@@ -16,15 +16,14 @@ def _():
     password = os.environ["POSTGRES_PASSWORD"]
     db = os.environ["POSTGRES_DB"]
     dsn = f"postgresql://{user}:{password}@localhost:5433/{db}"
-
-    return read_parquet, write_df, dsn
+    return dsn, read_parquet, write_df
 
 
 @app.cell
-def _(read_parquet, write_df):
+def _(dsn, read_parquet, write_df):
     df = read_parquet("../data/processed/surveys.parquet")
     inserted = write_df(df, dsn, "staging_votes")
-    inserted
+    print(f"Inserted {inserted} records into the database successfully.")
     return
 
 
