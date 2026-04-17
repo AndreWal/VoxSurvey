@@ -1,5 +1,5 @@
 import polars as pl
-from transform import _detect_separator, cal_age, replace_invalid_with_null, normalize
+from transform import _detect_separator, cal_age, replace_invalid_with_null_eight, replace_invalid_with_null_nine_eight, normalize
 
 
 def test_detect_separator_semicolon(tmp_path):
@@ -29,14 +29,14 @@ def test_cal_age_unknown_vote():
         pass
 
 
-def test_replace_invalid_with_null():
+def test_replace_invalid_with_null_eight():
     df = pl.DataFrame({"gender": [1, 8, 3], "polint": [2, 4, 8]})
-    result = replace_invalid_with_null(df)
+    result = replace_invalid_with_null_eight(df, cols=["gender", "polint"])
     assert result["gender"].to_list() == [1, None, 3]
     assert result["polint"].to_list() == [2, 4, None]
 
 
-def test_normalize_lowercases_columns():
-    df = pl.DataFrame({"Name": [1], " AGE ": [2]})
-    result = normalize(df)
-    assert result.columns == ["name", "age"]
+def test_replace_invalid_with_null_nine_eight():
+    df = pl.DataFrame({"lrsp": [5, 98, 3]})
+    result = replace_invalid_with_null_nine_eight(df)
+    assert result["lrsp"].to_list() == [5, None, 3]

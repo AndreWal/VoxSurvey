@@ -26,8 +26,11 @@ def write_df(df: pl.DataFrame, dsn: str, table: str) -> int:
         sql.Identifier(table), col_ids, placeholders
     )
 
+    drop_sql = sql.SQL("DROP TABLE IF EXISTS {}").format(sql.Identifier(table))
+
     with connect(dsn) as conn:
         with conn.cursor() as cur:
+            cur.execute(drop_sql)
             cur.execute(create_sql)
             cur.executemany(insert_sql, [[row[c] for c in cols] for row in rows])
         conn.commit()
